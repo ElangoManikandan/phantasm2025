@@ -104,46 +104,50 @@
     </div>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    const loginForm = document.getElementById('loginForm');
+    const loginForm = document.getElementById("loginForm");
 
-    loginForm.addEventListener('submit', async (e) => {
+    loginForm.addEventListener("submit", async (e) => {
         e.preventDefault(); // Prevent default form submission
 
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
 
         if (!email || !password) {
-            alert("Please fill in both email and password.");
+            alert("Please enter both email and password.");
             return;
         }
 
         try {
-            // 🔹 Correcting fetch logic
             const response = await fetch("https://phantasm.onrender.com/api/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
-                credentials: "include" // ✅ Ensures token is stored in cookies
+                credentials: "include" // ✅ Ensures cookies are included
             });
 
-            const result = await response.json(); // 🔹 Await JSON once
+            const result = await response.json(); // Await the JSON response
 
-            if (response.ok) { // ✅ Check response status correctly
-                localStorage.setItem("token", result.token); // ✅ Store token
-                alert("Login successful!");
-
-                // 🔹 Redirect based on user role
-                window.location.href = result.role === "admin" ? "/adminprofile.html" : "/profile.html";
-            } else {
-                alert(result.error || "Login failed. Please check your credentials.");
+            if (!response.ok) { // ❌ Handle incorrect login
+                throw new Error(result.error || "Login failed. Please check your credentials.");
             }
+
+            if (result.token) {
+                localStorage.setItem("token", result.token); // ✅ Store token
+            }
+
+            alert("Login successful! Redirecting...");
+
+            // ✅ Redirect based on user role
+            window.location.href = result.role === "admin" ? "/adminprofile.html" : "/profile.html";
+
         } catch (error) {
-            console.error("Error during login:", error);
-            alert("Something went wrong, please try again.");
+            console.error("Login Error:", error);
+            alert(error.message || "Something went wrong. Please try again.");
         }
     });
 });
 </script>
+
 
 </body>
 </html>
