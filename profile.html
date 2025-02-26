@@ -608,7 +608,7 @@ function fetchUserProfile() {
 
 
     function updateRegisteredEvents() {
-        fetch("/api/user/get-events", {
+        fetch("https://phantasm.onrender.com/api/events/get-events/api/user/get-events", {
             method: "GET",
             credentials: "include",
         })
@@ -653,7 +653,7 @@ const formData = {
 
 
             try {
-                const response = await fetch("/api/user/update-profile", {
+                const response = await fetch("https://phantasm.onrender.com/api/user/update-profile", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     credentials: "include",
