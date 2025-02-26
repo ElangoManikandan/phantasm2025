@@ -579,9 +579,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return response.json();
     }
 
+    
 function fetchUserProfile() {
     fetch("https://phantasm.onrender.com/api/user/get-profile", {
         method: "GET",
+         headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` },
         credentials: "include",
     })
     .then(response => handleFetchError(response))
