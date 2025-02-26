@@ -613,7 +613,9 @@ function fetchUserProfile() {
 
     function updateRegisteredEvents() {
         fetch("https://phantasm.onrender.com/api/user/get-events", {
+            
             method: "GET",
+                    "Authorization": token ? `Bearer ${token}` : "",
             credentials: "include",
         })
         .then(response => handleFetchError(response))
@@ -660,6 +662,7 @@ const formData = {
                 const response = await fetch("https://phantasm.onrender.com/api/user/update-profile", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
+                            "Authorization": token ? `Bearer ${token}` : "",
                     credentials: "include",
                     body: JSON.stringify(formData),
                 });
