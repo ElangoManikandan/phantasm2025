@@ -107,17 +107,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
 
     loginForm.addEventListener("submit", async (e) => {
-        e.preventDefault(); // Prevent default form submission
+        e.preventDefault(); // Prevent page reload on submit
 
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value.trim();
 
         if (!email || !password) {
-            alert("Please enter both email and password.");
+            alert("❌ Please enter both email and password.");
             return;
         }
 
         try {
+            console.log("🚀 Sending login request...");
+            
             const response = await fetch("https://phantasm.onrender.com/api/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -125,24 +127,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 credentials: "include" // ✅ Ensures cookies are included
             });
 
-            const result = await response.json(); // Await the JSON response
+            const result = await response.json(); // Await JSON response
 
             if (!response.ok) { // ❌ Handle incorrect login
-                throw new Error(result.error || "Login failed. Please check your credentials.");
+                console.error("❌ Login failed:", result);
+                alert(result.error || "❌ Login failed. Please check your credentials.");
+                return;
             }
 
+            console.log("✅ Login successful!", result);
+
+            // 🔹 Check if the backend sent a token
             if (result.token) {
-                localStorage.setItem("token", result.token); // ✅ Store token
+                sessionStorage.setItem("token", result.token); // ✅ Store token securely in sessionStorage
+                console.log("🔐 Token stored in sessionStorage");
+            } else {
+                console.warn("⚠️ No token received from server.");
             }
 
-            alert("Login successful! Redirecting...");
+            alert("✅ Login successful! Redirecting...");
 
             // ✅ Redirect based on user role
-            window.location.href = result.role === "admin" ? "/adminprofile.html" : "/profile.html";
+            if (result.role === "admin") {
+                window.location.href = "/adminprofile.html";
+            } else {
+                window.location.href = "/profile.html";
+            }
 
         } catch (error) {
-            console.error("Login Error:", error);
-            alert(error.message || "Something went wrong. Please try again.");
+            console.error("❌ Login Error:", error);
+            alert(error.message || "❌ Something went wrong. Please try again.");
         }
     });
 });
