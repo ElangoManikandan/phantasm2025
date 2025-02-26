@@ -118,24 +118,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
+            // 🔹 Correcting fetch logic
             const response = await fetch("https://phantasm.onrender.com/api/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
-                credentials: "include" // Ensure cookies are sent & received
+                credentials: "include" // ✅ Ensures token is stored in cookies
             });
 
-            const result = await response.json();
+            const result = await response.json(); // 🔹 Await JSON once
 
-            if (response.ok) {
-                alert("Login successful! Redirecting...");
+            if (response.ok) { // ✅ Check response status correctly
+                localStorage.setItem("token", result.token); // ✅ Store token
+                alert("Login successful!");
 
-                // Check the role and redirect accordingly
-                if (result.role === "admin") {
-                    window.location.href = "/adminprofile.html"; // Redirect for admins
-                } else {
-                    window.location.href = "/profile.html"; // Redirect for normal users
-                }
+                // 🔹 Redirect based on user role
+                window.location.href = result.role === "admin" ? "/adminprofile.html" : "/profile.html";
             } else {
                 alert(result.error || "Login failed. Please check your credentials.");
             }
@@ -146,5 +144,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
+
 </body>
 </html>
